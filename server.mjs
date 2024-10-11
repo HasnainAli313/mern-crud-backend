@@ -54,3 +54,41 @@ app.get('/users/:id', async (req, res) => {
         res.status(500).send(error);
     }
 });
+
+app.patch('/users/:id', async (req, res) => {
+    const updates = Object.keys(req.body);
+    const allowedUpdates = ['name', 'email'];
+    const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
+
+    if (!isValidOperation) {
+        return res.status(400).send({ error: 'Invalid updates!' });
+    }
+
+    try {
+        const user = await User.findById(req.params.id);
+
+        if (!user) {
+            return res.status(404).send();
+        }
+
+        updates.forEach((update) => user[update] = req.body[update]);
+        await user.save();
+        res.status(200).send(user);
+    } catch (error) {
+        res.status(400).send(error);
+    }
+});
+
+app.delete('/users/:id', async (req, res) => {
+    try {
+        const user = await User.findByIdAndDelete(req.params.id);
+
+        if (!user) {
+            return res.status(404).send();
+        }
+
+        res.status(200).send(user);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
