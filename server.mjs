@@ -16,3 +16,9 @@ mongoose.connect(mongoUri, {
 }).catch(err => {
     console.error('Error connecting to MongoDB:', err.message);
 });
+
+const userSchema = new mongoose.Schema({
+    name: String,
+    email: String,
+});
+
